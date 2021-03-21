@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_20_151855) do
+ActiveRecord::Schema.define(version: 2021_03_20_174951) do
+
+  create_table "item_slots", force: :cascade do |t|
+    t.integer "quantity", null: false
+    t.integer "wizard_id", null: false
+    t.integer "item_id", null: false
+    t.index ["item_id"], name: "index_item_slots_on_item_id"
+    t.index ["wizard_id"], name: "index_item_slots_on_wizard_id"
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "value", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "wizards", force: :cascade do |t|
     t.string "name", null: false
