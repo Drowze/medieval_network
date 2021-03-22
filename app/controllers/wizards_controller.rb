@@ -1,17 +1,22 @@
 class WizardsController < ApplicationController
-  def create
-    wizard = Wizard.new(wizard_params)
+  skip_before_action :verify_authenticity_token
 
-    if wizard.save
-      render status: :created, json: wizard
+  def create
+    command = CreateWizard.new(wizard_params: wizard_params)
+    command.execute
+
+    if command.valid?
+      wizard = command.outputs.wizard
+      render status: :created, json: WizardSerializer.new(wizard).as_json(with_item_slots: true)
     else
-      render status: :bad_request, json: {}
+      render status: :bad_request, json: command.errors
     end
   end
 
   private
 
   def wizard_params
-    params.require(:wizard).permit(:name, :gender, :location_x, :location_y)
+    params
+      .permit(:name, :gender, :location_x, :location_y, :gold, item_slots: %i[item_id quantity])
   end
 end
